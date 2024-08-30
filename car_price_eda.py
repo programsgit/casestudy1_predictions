@@ -31,6 +31,7 @@ from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.preprocessing import LabelEncoder
 from sklearn import metrics as mat
 import seaborn as sns
+import joblib
 st.set_page_config(page_title="Car Price",page_icon=":car:",layout="wide")
 
 st.title(":car: Car Price Data Analysis :car: ")
@@ -66,8 +67,7 @@ c2.dataframe(y)
 lmodel = LinearRegression()
 lmodel.fit(x, y)
 
-#=== saving the model to a file
-saved_model = pickle.dump(lmodel, open('car_price1.pkl', 'wb'))
+
 
 
 
@@ -138,9 +138,15 @@ las.fit(xtrain, ytrain)
 enet.fit(xtrain, ytrain)
 
 # ===== Storing these trained Models to a file
-m1 = pickle.dump(rid, open('car_price2.pkl','wb'))
-m2 = pickle.dump(las, open('car_price3.pkl','wb'))
-m3 = pickle.dump(enet, open('car_price4.pkl','wb'))
+# saved_model = pickle.dump(lmodel, open('car_price1.pkl', 'wb'))
+# m1 = pickle.dump(rid, open('car_price2.pkl','wb'))
+# m2 = pickle.dump(las, open('car_price3.pkl','wb'))
+# m3 = pickle.dump(enet, open('car_price4.pkl','wb'))
+
+m1 = joblib.dump(lmodel, open('car_price1.pkl', 'wb'))
+m2 = joblib.dump(rid, open('car_price2.pkl','wb'))
+m3 = joblib.dump(las, open('car_price3.pkl','wb'))
+m4 = joblib.dump(enet, open('car_price4.pkl','wb'))
 
 # ===== Predicting values for our test data ==============
 ypred1 = rid.predict(xtest)
