@@ -5,7 +5,7 @@ import streamlit as st
 
 pg = st.navigation([
 st.Page("menu.py",title="Home Page"),
-st.Page("dashboard_netflix.py",title="Netflix Trends Dashboard"),
+#st.Page("dashboard_netflix.py",title="Netflix Trends Dashboard"),
 
 st.Page("glass.py",title="Glass Type - Classification"),
 st.Page("glass_pred.py",title="Glass Type - Prediction "),
