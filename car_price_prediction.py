@@ -6,12 +6,21 @@
 import streamlit as st
 import pickle
 import locale
+import joblib
+
 locale.setlocale(locale.LC_ALL, '' )
 
-lmodel1 = pickle.load(open('car_price1.pkl', 'rb'))
-lmodel2 = pickle.load(open('car_price2.pkl', 'rb'))
-lmodel3 = pickle.load(open('car_price3.pkl', 'rb'))
-lmodel4 = pickle.load(open('car_price4.pkl', 'rb'))
+#lmodel1 = pickle.load(open('car_price1.pkl', 'rb'))
+#lmodel2 = pickle.load(open('car_price2.pkl', 'rb'))
+#lmodel3 = pickle.load(open('car_price3.pkl', 'rb'))
+#lmodel4 = pickle.load(open('car_price4.pkl', 'rb'))
+
+
+lmodel1 = joblib.load(open('car_price1.pkl', 'rb'))
+lmodel2 = joblib.load(open('car_price2.pkl', 'rb'))
+lmodel3 = joblib.load(open('car_price3.pkl', 'rb'))
+lmodel4 = joblib.load(open('car_price4.pkl', 'rb'))
+
 
 st.header("Prediction")
 
