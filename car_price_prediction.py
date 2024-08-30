@@ -61,7 +61,7 @@ if st.button("Predict the price"):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
             st.subheader("Linear Regression")
-            st.subheader(priceformat(t1))
+            st.subheader((t1))
         with c2:
             st.subheader("Ridge Model")
             st.subheader(priceformat(t2))
