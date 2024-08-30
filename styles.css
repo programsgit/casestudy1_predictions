@@ -1,0 +1,43 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* Header and sidebar background colors */
+.css-1l02d9a, .css-1rs6osf {
+    background-color: #1e1e1e;
+}
+
+/* Sidebar text color */
+.css-1f1d60w {
+    color: #e0e0e0;
+}
+
+/* Change button and input styles to match dark theme */
+.css-1o4ux7r, .css-1n1v10h {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+/* Adjust chart colors */
+.css-1i64wgt {
+    background-color: #121212;
+}
+
+.stButton>button {
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+}
+
+.stTextInput>div>input {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
+
+.stSelectbox>div>select {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+}
