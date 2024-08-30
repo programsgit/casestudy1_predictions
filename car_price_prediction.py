@@ -16,10 +16,10 @@ locale.setlocale(locale.LC_ALL, '' )
 #lmodel4 = pickle.load(open('car_price4.pkl', 'rb'))
 
 
-lmodel1 = joblib.load(open('car_price1.pkl', 'rb'))
-lmodel2 = joblib.load(open('car_price2.pkl', 'rb'))
-lmodel3 = joblib.load(open('car_price3.pkl', 'rb'))
-lmodel4 = joblib.load(open('car_price4.pkl', 'rb'))
+lmodel1 = joblib.load('car_price1.pkl')
+lmodel2 = joblib.load('car_price2.pkl')
+lmodel3 = joblib.load('car_price3.pkl')
+lmodel4 = joblib.load('car_price4.pkl')
 
 
 st.header("Prediction")
