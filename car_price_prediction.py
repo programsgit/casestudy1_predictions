@@ -44,7 +44,7 @@ def priceformat(x):
     n=0
     try:
         n = round(x.flatten()[0],2)
-        n = '${:,.2f}'.format(n)
+        n = '₹{:,.2f}'.format(n)
         #n = locale.currency(n, grouping=True )
     except:
         n=0
