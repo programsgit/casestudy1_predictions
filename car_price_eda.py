@@ -143,10 +143,10 @@ enet.fit(xtrain, ytrain)
 # m2 = pickle.dump(las, open('car_price3.pkl','wb'))
 # m3 = pickle.dump(enet, open('car_price4.pkl','wb'))
 
-m1 = joblib.dump(lmodel, open('car_price1.pkl', 'wb'))
-m2 = joblib.dump(rid, open('car_price2.pkl','wb'))
-m3 = joblib.dump(las, open('car_price3.pkl','wb'))
-m4 = joblib.dump(enet, open('car_price4.pkl','wb'))
+m1 = joblib.dump(lmodel, 'car_price1.pkl')
+m2 = joblib.dump(rid, 'car_price2.pkl')
+m3 = joblib.dump(las, 'car_price3.pkl')
+m4 = joblib.dump(enet,'car_price4.pkl')
 
 # ===== Predicting values for our test data ==============
 ypred1 = rid.predict(xtest)
