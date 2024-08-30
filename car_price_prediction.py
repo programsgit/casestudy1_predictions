@@ -44,7 +44,7 @@ def priceformat(x):
     n=0
     try:
         n = round(x.flatten()[0],2)
-        n = locale.currency(n, grouping=True )
+        #n = locale.currency(n, grouping=True )
     except:
         n=0
     return n
@@ -61,7 +61,7 @@ if st.button("Predict the price"):
         c1, c2, c3, c4 = st.columns(4)
         with c1:
             st.subheader("Linear Regression")
-            st.subheader((t1))
+            st.subheader(priceformat(t1))
         with c2:
             st.subheader("Ridge Model")
             st.subheader(priceformat(t2))
