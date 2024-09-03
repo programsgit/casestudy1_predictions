@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 import io
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import scale
+import numpy as np
+
 
 # ===== Page Configuration =====
 st.set_page_config(page_title="Clustering of Mall Customers", page_icon=":shopping_bag:", layout="wide")
@@ -123,60 +125,88 @@ fig1c.update_layout(title="Annual Income (k$) vs Spending Score (1-100) by Gende
                     yaxis_title="Total Spending Score (1-100)")
 st.plotly_chart(fig1c, use_container_width=True)
 
-# ===== Data Preprocessing =====
+
+
+
+
+
+
+# Preprocessing 
 le = LabelEncoder()
 df['Gender'] = le.fit_transform(df['Gender'])
-
-# ===== Finding Optimal Number of Clusters =====
-
-x_df = df[['Gender', 'Age', 'Annual Income (k$)']]
-# x_df = df[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']]
-#x_df = df[['Annual Income (k$)', 'Spending Score (1-100)']]
-
+features = df[['Gender', 'Age', 'Annual Income (k$)']]
 scaler = StandardScaler()
-scaled_df = scaler.fit_transform(x_df)
-
-st.subheader("Finding Optimal Number of Clusters")
-# Elbow Method to Determine Optimal K
-wcss = []
-k_range = range(1, 11)
-for k in k_range:
-    kmeans = KMeans(n_clusters=k, init="k-means++", max_iter=30, random_state=0)
-    kmeans.fit(scaled_df)
-    wcss.append(kmeans.inertia_)
-
-kdf = pd.DataFrame({'k': k_range, 'wcss': wcss})
-fig2 = px.line(kdf, x="k", y="wcss", title="Elbow Method for Optimal K")
-st.plotly_chart(fig2, use_container_width=True)
-
-# ===== Applying K-Means Clustering =====
-st.subheader("K-Means Clustering")
-
-
-optimal_k = 5
-
-
-kmeans_model = KMeans(n_clusters=optimal_k, init="k-means++", max_iter=30, random_state=42, tol=0.001)
-clusters = kmeans_model.fit_predict(scaled_df)
-df['Cluster'] = clusters
-
+features_scaled = scaler.fit_transform(features)
+kmeans = KMeans(n_clusters=6, random_state=42)
+clusters = kmeans.fit_predict(features_scaled)
 # Save the model
-pickle.dump(kmeans_model, open('mall_kmeans.pkl', 'wb'))
+pickle.dump(kmeans, open('mall_kmeans.pkl', 'wb'))
+
+# ===========================================
+
+features = df[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']]
+scaler = StandardScaler()
+features_scaled = scaler.fit_transform(features)
+
+# Define range of k values
+k_values = list(range(4, 9))
+
+# Function to calculate WCSS
+def calculate_wcss(features, k_values):
+	wcss = []
+	for k in k_values:
+		kmeans = KMeans(n_clusters=k, random_state=42)
+		kmeans.fit(features)
+		wcss.append(kmeans.inertia_)
+	return wcss
+
+# Function to calculate Silhouette Scores
+def calculate_silhouette(features, k_values):
+	silhouette_scores = []
+	for k in k_values:
+		kmeans = KMeans(n_clusters=k, random_state=42)
+		clusters = kmeans.fit_predict(features)
+		score = silhouette_score(features, clusters)
+		silhouette_scores.append(score)
+	return silhouette_scores
+
+# Calculate WCSS for each case
+wcss = calculate_wcss(features_scaled, k_values)
 
 
+# Calculate Silhouette Scores for each case
+silhouette = calculate_silhouette(features_scaled, k_values)
+# ===========================================
+# Plot WCSS for all cases
+fig, ax = plt.subplots(figsize=(15, 8))
+ax.plot(k_values, wcss, marker='o', label='(Age, Income, Spending)')
+ax.set_title('Elbow Method for Optimal Number of Clusters')
+ax.set_xlabel('Number of Clusters (K)')
+ax.set_ylabel('WCSS')
+ax.legend()
+ax.grid(True)
+st.pyplot(fig)
+
+# Plot Silhouette Scores for all cases
+fig, ax = plt.subplots(figsize=(15, 8))
+ax.plot(k_values, silhouette, marker='o', label='(Age, Income, Spending)')
+ax.set_title('Silhouette Scores for Different Number of Clusters')
+ax.set_xlabel('Number of Clusters (K)')
+ax.set_ylabel('Silhouette Score')
+ax.legend()
+ax.grid(True)
+st.pyplot(fig)
 
 
+# ===========================================
+
+# KMeans clustering with k=6
+kmeans = KMeans(n_clusters=6, random_state=42)
+clusters = kmeans.fit_predict(features_scaled)
+# Save the model
 
 
-
-
-
-
-
-
-
-
-
+df['Cluster'] = clusters
 # ===== Pair Plot of Clusters =====
 st.subheader("Pair Plot of Clusters")
 buffer = io.BytesIO()
@@ -187,154 +217,123 @@ buffer.seek(0)
 st.image(buffer)
 
 
+# Calculate silhouette score for clustering
+silhouette_avg = silhouette_score(features_scaled, clusters)
 
-# ==== K-Means and PCA 
-# Perform KMeans clustering
-x = df.drop(['Spending Score (1-100)'], axis=1)
-kmeans = KMeans(n_clusters=optimal_k, init="k-means++", max_iter=30, random_state=0)
-df['y1'] = kmeans.fit_predict(x)
+# PCA for dimensionality reduction
+pca = PCA(n_components=3)
+features_pca = pca.fit_transform(features_scaled)
 
-# Apply PCA
-st.header("Applying PCA on features")
-x_scaled = scale(x)
-pca = PCA(n_components=4)
-pca_x = pca.fit_transform(x_scaled)
-df['y2'] = kmeans.fit_predict(pca_x)
-
-# Visualize the clustering results without PCA
-st.header("Visualizing the labels without PCA and clusters")
-fig2 = go.Figure()
-
-# Adding trace for scatter plot without PCA
-fig2.add_trace(go.Scatter(
-    x=df['Annual Income (k$)'],
-    y=df['Spending Score (1-100)'],
-    mode='markers',
-    marker=dict(
-        size=df['Age'],  # Size based on Age
-        color=df['y1'],  # Color based on clusters
-        colorscale='Viridis',  # Color scale for clusters
-        colorbar=dict(title='Cluster', tickvals=list(range(5)), ticktext=[f'Cluster {i}' for i in range(5)])
-    ),
-    text=df['Age'],  # Tooltip text
-    hoverinfo='all',
-    name='Without PCA'
-))
-
-fig2.update_layout(
-    title="Clusters Without PCA",
-    xaxis_title='Annual Income (k$)',
-    yaxis_title='Spending Score (1-100)',
-)
-
-st.plotly_chart(fig2, use_container_width=True)
-
-# Visualize the clustering results with PCA
-st.header("Visualizing the labels with PCA and clusters")
-fig3 = go.Figure()
-
-# Adding trace for scatter plot with PCA
-fig3.add_trace(go.Scatter(
-    x=df['Annual Income (k$)'],
-    y=df['Spending Score (1-100)'],
-    mode='markers',
-    marker=dict(
-        size=df['Age'],  # Size based on Age
-        color=df['y2'],  # Color based on clusters after PCA
-        colorscale='Viridis',  # Color scale for clusters
-        colorbar=dict(title='Cluster', tickvals=list(range(5)), ticktext=[f'Cluster {i}' for i in range(5)])
-    ),
-    text=df['Age'],  # Tooltip text
-    hoverinfo='all',
-    name='With PCA'
-))
-
-fig3.update_layout(
-    title="Clusters With PCA",
-    xaxis_title='Annual Income (k$)',
-    yaxis_title='Spending Score (1-100)',
-)
-
-st.plotly_chart(fig3, use_container_width=True)
-
-# Evaluation Metrics
-c1, c2 = st.columns(2)
-c1.subheader("Silhouette Score without PCA")
-c1.write(silhouette_score(x, df['y1']))
-c2.subheader("Silhouette Score with PCA")
-c2.write(silhouette_score(x_scaled, df['y2'])) 
+clusters_pca = kmeans.predict(features_scaled)
+silhouette_pca = silhouette_score(features_scaled, clusters_pca)
 
 
 
 
+# ===========================================
 
+def plot_scatter_plotly(data, labels, title, score):
+    fig = go.Figure()
+    unique_labels = np.unique(labels)
+    colors = ['blue', 'green', 'red', 'purple', 'orange', 'cyan']  # adjust colors if needed
 
-# ============== Visualization Before and After Clustering ======
-colors_list = px.colors.sequential.Plasma  # Example continuous color scale
+    for label in unique_labels:
+        mask = (labels == label)
+        fig.add_trace(go.Scatter(
+            x=data[mask, 0],
+            y=data[mask, 1],
+            mode='markers',
+            marker=dict(size=10, opacity=0.8),
+            name=f'Cluster {label}'
+        ))
 
-st.header("Visualization of Clustering Results")
-
-# Before Clustering
-st.subheader("Before Clustering")
-fig3 = go.Figure()
-
-# Adding trace for scatter plot with color scale
-fig3.add_trace(go.Scatter(
+    fig.update_layout(
+        title=f'{title} (Silhouette Score: {score:.2f})',
+        xaxis_title='Income',
+        yaxis_title='Spending Score',
+        legend_title='Clusters',
+        template='plotly_white'
+    )
+    return fig
 	
-	x=df['Annual Income (k$)'],
-	y=df['Spending Score (1-100)'],
-	
-    mode='markers',
-    marker=dict(
-        size=10,  # Fixed size for all markers or adjust based on your requirement
-        color=df['Spending Score (1-100)'],  # Map this column to the color scale
-        colorscale=colors_list,  # Apply the color scale
-        colorbar=dict(title='Spending Score (1-100)', tickvals=[0, 50, 100], ticktext=['Low', 'Medium', 'High']),
-        showscale=True
-    ),
-    text=df['Gender'],
-    hoverinfo='all',  # Show hover info with color scale
-    name='Before Clustering'
+# Scatter plot before clustering
+fig_before = go.Figure()
+fig_before.add_trace(go.Scatter(
+	x=features_scaled[:, 0],
+	y=features_scaled[:, 1],
+	mode='markers',
+	marker=dict(size=10, color='grey', opacity=0.5),
+	name='Data Points'
 ))
-
-fig3.update_layout(
-    #title="Before Clustering",
-    xaxis_title='Annual Income (k$)',
-    yaxis_title='Spending Score (1-100)',
+fig_before.update_layout(
+	title='Before Clustering',
+	xaxis_title='Income',
+	yaxis_title='Spending Score',
+	template='plotly_white'
 )
+st.plotly_chart(fig_before)
 
-st.plotly_chart(fig3, use_container_width=True)
+# Scatter plot after clustering
+fig_after = plot_scatter_plotly(features_scaled, clusters, 'After Clustering', silhouette_avg)
+st.plotly_chart(fig_after)
+
+# Scatter plot after PCA clustering
+fig_pca = plot_scatter_plotly(features_pca, clusters_pca, 'After PCA Decomposition', silhouette_pca)
+st.plotly_chart(fig_pca)
+
+# ===========================================
 
 
+def plot_3d_scatter(features_pca, clusters_pca):
+    fig = go.Figure()
 
-st.subheader("After Clustering")
-colors_list = px.colors.sequential.Jet 
-fig5 = go.Figure()
-for i in range(optimal_k):
-    cluster_data = df[df['Cluster'] == i]
-    fig5.add_trace(go.Scatter(
-        x=cluster_data['Annual Income (k$)'],
-        y=cluster_data['Spending Score (1-100)'],
+    # Add 3D scatter plot
+    fig.add_trace(go.Scatter3d(
+        x=features_pca[:, 1],
+        y=features_pca[:, 2],
+        z=features_pca[:, 0],
         mode='markers',
-        name=f'Cluster {i+1}',
-        marker=dict(color=colors_list[i % len(colors_list)], size=10)
+        marker=dict(
+            size=5,
+            color=clusters_pca,  # Color by cluster
+            colorscale='viridis',  # Color map
+            opacity=0.8
+        ),
+        text=[f'Cluster {c}' for c in clusters_pca]  # Add text labels for hover
     ))
 
-fig5.update_layout(title=f'KMeans Clustering with {optimal_k} Clusters',
-                   xaxis_title='Annual Income (k$)',
-                   yaxis_title='Spending Score (1-100)')
-st.plotly_chart(fig5, use_container_width=True)
+    # Update layout
+    fig.update_layout(
+        title='K-means Clustering: 3D Plot',
+        scene=dict(
+            xaxis_title='Annual Income',
+            yaxis_title='Score',
+            zaxis_title='Age'
+        ),
+        template='plotly_white'
+    )
 
+    return fig
+
+# Plotting
+st.write("3D Scatter Plot")
+
+# Plot 3D scatter plot using Plotly
+fig_3d = plot_3d_scatter(features_pca, clusters_pca)
+st.plotly_chart(fig_3d)
+
+
+# ===========================================
 
 
 # ===== Evaluation Metrics =====
 st.subheader("Evaluation Metrics")
-silhouette_avg = silhouette_score(scaled_df, clusters)
-davies_bouldin = davies_bouldin_score(scaled_df, clusters)
-calinski_harabasz = calinski_harabasz_score(scaled_df, clusters)
+silhouette_avg = silhouette_score(features_scaled, clusters)
+davies_bouldin = davies_bouldin_score(features_scaled, clusters)
+calinski_harabasz = calinski_harabasz_score(features_scaled, clusters)
 
 st.write(f"***Silhouette Score:*** {silhouette_avg:.2f}")
 st.write(f"***Davies-Bouldin Score:*** {davies_bouldin:.2f}")
 st.write(f"***Calinski-Harabasz Score:*** {calinski_harabasz:.2f}")
 
-
+st.divider()
