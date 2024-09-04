@@ -26,23 +26,33 @@ n3=int(c1.number_input("Enter Annual Income (k$)", step=1, min_value=0, max_valu
 
 
 
+category_list = {
+    0: "Low Spending Customers",
+    1: "Moderate Spending Customers",
+    2: "Selective Spending Customers",
+    3: "High Spending Customers",
+    4: "Very High Spending Customers",
+    5: "Economical Spending Customers",
+}
+
 sample=[[n1,n2,n3]]
 
 if(st.button("Predict the category of the Customer")):
     t = model1.predict(sample)
     st.write("Customer in category :")
-    #st.write(t)
+    st.write(t)
     if (t == 0):
-        st.write("Customer with Low Shopping score")
+        st.write(category_list[0])
     elif (t == 1):
-        st.write("Customer with Normal Shopping score")
+        st.write(category_list[1])
     elif (t == 2):
-        st.write("Customer with High Shopping score")
+        st.write(category_list[2])
     elif (t == 3):
-        st.write("Customer with Very High Shopping score")   
+        st.write(category_list[3])
     elif (t == 4):
-        st.write("Customer with Low Shopping score")    		
+        st.write(category_list[4])
+    elif (t == 5):
+        st.write(category_list[5])
     else:
-        st.write("Shopping score not listed")
-
+        st.write("Category of the Customer not found")
 
