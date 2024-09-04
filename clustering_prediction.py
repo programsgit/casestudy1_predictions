@@ -40,7 +40,7 @@ sample=[[n1,n2,n3]]
 if(st.button("Predict the category of the Customer")):
     t = model1.predict(sample)
     st.write("Customer in category :")
-    st.write(t)
+    #st.write(t)
     if (t == 0):
         st.write(category_list[0])
     elif (t == 1):
