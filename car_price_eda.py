@@ -117,64 +117,6 @@ ypred1 = rid.predict(xtest)
 ypred2 = las.predict(xtest)
 ypred3 = enet.predict(xtest)
 
-st.header("Comparison of different Models")
-mse0 = mat.mean_squared_error(ytest, ypred0)
-mse1 = mat.mean_squared_error(ytest, ypred1)
-mse2 = mat.mean_squared_error(ytest, ypred2)
-mse3 = mat.mean_squared_error(ytest, ypred3)
-
-rmse0 = mse0 ** 0.5
-rmse1 = mse1 ** 0.5
-rmse2 = mse2 ** 0.5
-rmse3 = mse3 ** 0.5
-
-r2_0 = mat.r2_score(ytest, ypred0)
-r2_1 = mat.r2_score(ytest, ypred1)
-r2_2 = mat.r2_score(ytest, ypred2)
-r2_3 = mat.r2_score(ytest, ypred3)
-
-mae0 = mat.mean_absolute_error(ytest, ypred0)
-mae1 = mat.mean_absolute_error(ytest, ypred1)
-mae2 = mat.mean_absolute_error(ytest, ypred2)
-mae3 = mat.mean_absolute_error(ytest, ypred3)
-
-col_1, col_2, col_3, col_4, col_5 = st.columns(5)
-
-with col_1:
-    st.subheader("Model Name")
-    st.write("Linear")
-    st.write("Ridge")
-    st.write("Lasso")
-    st.write("ElasticNet")
-
-with col_2:
-    st.subheader("Mean Squared Error (MSE)")
-    st.write(mse0)
-    st.write(mse1)
-    st.write(mse2)
-    st.write(mse3)
-
-with col_3:
-    st.subheader("R2 Score (Score)")
-    st.write(r2_0)
-    st.write(r2_1)
-    st.write(r2_2)
-    st.write(r2_3)
-
-with col_4:
-    st.subheader("Mean Absolute Error (MAE)")
-    st.write(mae0)
-    st.write(mae1)
-    st.write(mae2)
-    st.write(mae3)
-
-with col_5:
-    st.subheader("Root Mean Squared Error (RMSE)")
-    st.write(rmse0)
-    st.write(rmse1)
-    st.write(rmse2)
-    st.write(rmse3)
-st.divider()
 
 st.header("Price Prediction of different Models")
 testing_data['id'] = range(1, 1+len(testing_data))
@@ -264,10 +206,62 @@ with col4:
 	
 	
 # Display results
-st.title('Car Price Prediction Analysis')
-
+st.header("Comparison of different Models")
 st.subheader('Model Performance Metrics')
-st.write(f'**R-Squared (R²):** {r2:.2f}', 'Indicating that 85% of the variability in car prices is explained by the model.')
-st.write(f'**Mean Absolute Error (MAE):** ₹{mae:,.2f}', 'Suggesting that the model\'s predictions deviate from the actual prices by this amount on average.')
-st.write(f'**Mean Squared Error (MSE):** ₹{mse:,.2f}', 'Reflecting the average magnitude of prediction errors.')
-st.write(f'**Root Mean Squared Error (RMSE):** ₹{rmse:,.2f}', 'Indicating the standard deviation of the prediction errors.')
+mse0 = mat.mean_squared_error(ytest, ypred0)
+mse1 = mat.mean_squared_error(ytest, ypred1)
+mse2 = mat.mean_squared_error(ytest, ypred2)
+mse3 = mat.mean_squared_error(ytest, ypred3)
+
+rmse0 = mse0 ** 0.5
+rmse1 = mse1 ** 0.5
+rmse2 = mse2 ** 0.5
+rmse3 = mse3 ** 0.5
+
+r2_0 = mat.r2_score(ytest, ypred0)
+r2_1 = mat.r2_score(ytest, ypred1)
+r2_2 = mat.r2_score(ytest, ypred2)
+r2_3 = mat.r2_score(ytest, ypred3)
+
+mae0 = mat.mean_absolute_error(ytest, ypred0)
+mae1 = mat.mean_absolute_error(ytest, ypred1)
+mae2 = mat.mean_absolute_error(ytest, ypred2)
+mae3 = mat.mean_absolute_error(ytest, ypred3)
+
+col_1, col_2, col_3, col_4, col_5 = st.columns(5)
+
+with col_1:
+    st.subheader("Model Name")
+    st.write("Linear")
+    st.write("Ridge")
+    st.write("Lasso")
+    st.write("ElasticNet")
+
+with col_2:
+    st.subheader("Mean Squared Error (MSE)")
+    st.write(mse0)
+    st.write(mse1)
+    st.write(mse2)
+    st.write(mse3)
+
+with col_3:
+    st.subheader("R2 Score (Score)")
+    st.write(r2_0)
+    st.write(r2_1)
+    st.write(r2_2)
+    st.write(r2_3)
+
+with col_4:
+    st.subheader("Mean Absolute Error (MAE)")
+    st.write(mae0)
+    st.write(mae1)
+    st.write(mae2)
+    st.write(mae3)
+
+with col_5:
+    st.subheader("Root Mean Squared Error (RMSE)")
+    st.write(rmse0)
+    st.write(rmse1)
+    st.write(rmse2)
+    st.write(rmse3)
+st.divider()
